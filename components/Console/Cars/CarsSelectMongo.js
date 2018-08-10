@@ -36,7 +36,6 @@ class CarsSelect extends Component {
     const { classes, cars } = this.props;
     const currentCar = cars[this.state.selectedCar];
     const id = Object.keys(cars);
-    console.log(id)
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -50,9 +49,9 @@ class CarsSelect extends Component {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            {id.map(i => (
+            {cars.map(car => (
               <MenuItem key={i} value={i}>
-                {cars[i].mark + " " + cars[i].model}
+                {car.mark + " " + car.model}
               </MenuItem>
             ))}
           </Select>
@@ -62,7 +61,7 @@ class CarsSelect extends Component {
           <div className={classes.carContainer}>
             <p>
               <span className={classes.type}>ID: </span>
-              <span>{currentCar.id || currentCar._id}</span>
+              <span>{currentCar._id}</span>
             </p>
             <p>
               <span className={classes.type}>Mark: </span>

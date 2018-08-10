@@ -11,9 +11,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-import logo from "../../assets/react_logo.png";
 import AccountList from "./AccountList";
-import SidebarList from "./SidebarList";
+import SidebarList from "./Sidebar/SidebarList";
 import EditProfile from "./Profile/EditProfile";
 import Profile from "./Profile/Profile";
 // import Dashboard from "./Dashboard";
@@ -21,7 +20,10 @@ import Nominations from "./Nominations/Nominations";
 import VoteList from "./VoteList/VoteList";
 import VoteCharts from "./VoteCharts/VoteCharts";
 import Cars from "./Cars/Cars";
+import CarsMongo from "./Cars/CarsMongo";
 import Users from "./Users/Users";
+import UsersMongo from "./Users/UsersMongo";
+import NominationsMongo from "./Nominations/NominationsMongo";
 
 const drawerWidth = 240;
 
@@ -110,7 +112,7 @@ class ConsoleDrawer extends React.PureComponent {
             <div className={classes.drawerContent}>
               <div className={classes.toolbar}>
                 <div className={classes.toolbarHeader}>
-                  <img className={classes.logo} src={logo} alt="Logo" />
+                  <img className={classes.logo} src="https://res.cloudinary.com/dxfogjj18/image/upload/v1533807100/icons/react_logo.png" alt="Logo" />
                   <Typography
                     variant="headline"
                     color="inherit"
@@ -128,9 +130,6 @@ class ConsoleDrawer extends React.PureComponent {
             </div>
           </Drawer>
           <main className={classes.content}>
-            <Route path={`${match.url}/nominations`} component={Nominations} />
-            <Route path={`${match.url}/vote-list`} component={VoteList} />
-            <Route path={`${match.url}/vote-charts`} component={VoteCharts} />
             <Route path={`${match.url}/profile`} component={Profile} />
             <Route
               path={`${match.url}/edit-profile`}
@@ -142,8 +141,14 @@ class ConsoleDrawer extends React.PureComponent {
                 />
               )}
             />
-            <Route path={`${match.url}/users`} component={Users} />
-            <Route path={`${match.url}/cars`} component={Cars} />
+            <Route path={`${match.url}/firebase/nominations`} component={Nominations} />
+            <Route path={`${match.url}/firebase/users`} component={Users} />
+            <Route path={`${match.url}/firebase/cars`} component={Cars} />
+            <Route path={`${match.url}/mongo/nominations`} component={NominationsMongo} />
+            <Route path={`${match.url}/mongo/users`} component={UsersMongo} />
+            <Route path={`${match.url}/mongo/cars`} component={CarsMongo} />
+            <Route path={`${match.url}/vote-charts`} component={VoteCharts} />
+            <Route path={`${match.url}/vote-list`} component={VoteList} />
             <Route exact path={match.url} component={Cars} />
           </main>
         </div>

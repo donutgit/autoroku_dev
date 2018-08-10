@@ -23,6 +23,7 @@ import ChartsPage from "./containers/ChartsPage/ChartsPage";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Console from "./containers/Console/Console";
+import withMongo from "./hoc/withMongo";
 // import EditProfile from "./components/Console/EditProfile";
 // import UpdateUser from "./components/Forms/AccountPage";
 // import RouteTest from "./components/_Trash/RouteTest/RouteTest";
@@ -98,6 +99,7 @@ const App = () => {
 // export default withAuthentication(App);
 export default compose(
   withAppData,
+  withMongo,
   withAuthentication
 )(App);
 // export default withAuthentication(withAppData(App));
