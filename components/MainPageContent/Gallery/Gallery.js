@@ -3,13 +3,15 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Grid from "@material-ui/core/Grid";
 import AppDataContext from "../../../hoc/AppDataContext";
 import Spinner from "../../UI/Spinner/Spinner";
-import { TitleWrap, TitleUnderline } from "../../../containers/MainPage/MainPage.css";
+import {
+  TitleWrap,
+  TitleUnderline
+} from "../../../containers/MainPage/MainPage.css";
 // import classes from "./Gallery.css";
 import GalleryImages from "./GalleryImages";
 
 class Gallery extends PureComponent {
   render() {
-    console.log("render gallery");
     return (
       <Grid container spacing={0} alignContent="center" alignItems="center">
         <Grid item xs={12}>
@@ -20,12 +22,10 @@ class Gallery extends PureComponent {
               className={TitleUnderline}
             >
               PARTISIPANTS
-            </Typography> 
+            </Typography>
           </div>
           <AppDataContext.Consumer>
-            {({ state: { error }, state: { pureData } }) => {
-              console.log("[CONSUMER START]");
-              console.log(pureData);
+            {({ cars, error }) => {
               // const data = pureData
               //   ? Object.values(pureData)
               //       .map(car => car.imageUrl)
@@ -33,9 +33,9 @@ class Gallery extends PureComponent {
               //   : null;
               // СЛУЧАЙНОЕ ПЕРЕМЕШИВАНИЕ
               let shuffle;
-              if (pureData) {
+              if (cars && !error) {
                 // images = Object.values(pureData).map(car => car.imageUrl);
-                shuffle = Object.values(pureData);
+                shuffle = Object.values(cars);
                 let j, temp;
                 for (var i = shuffle.length - 1; i > 0; i--) {
                   j = Math.floor(Math.random() * (i + 1));
@@ -45,14 +45,10 @@ class Gallery extends PureComponent {
                 }
               }
 
-              return (
-                <div>
-                  {!error && pureData !== null ? (
-                    <GalleryImages data={shuffle.slice(0, 8)} loading={error} />
-                  ) : (
-                    <Spinner />
-                  )}
-                </div>
+              return !error && cars !== null ? (
+                <GalleryImages data={shuffle.slice(0, 8)} loading={error} />
+              ) : (
+                <Spinner />
               );
             }}
           </AppDataContext.Consumer>

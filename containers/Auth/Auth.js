@@ -1,13 +1,20 @@
 import React, { Component } from "react";
-import { auth, firestore } from "../../firebase/index";
 //mui
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
+//nodejs
+import JoinFrom from "../../components/Forms/JoinFromNode";
+import LoginForm from "../../components/Forms/LoginFormNode";
+import {
+  authenticateUser,
+  isUserAuthenticated
+} from "../../modules/AuthHelpers";
+///query
+import { onRegister, onLogin } from "../../queries";
 
-import JoinFrom from "../../components/Forms/JoinFrom";
-import LoginForm from "../../components/Forms/LoginForm";
 import formStyle from "./Auth.css";
 import bgImage from "../../assets/bg.png";
+import AuthContext from "../../hoc/AuthContext";
 
 const styles = theme => ({
   root: {
@@ -36,63 +43,45 @@ class Auth extends Component {
   onSubmitJoinFrom = (event, formData) => {
     this.setState({ loading: true });
     event.preventDefault();
-    const { email, password, username } = formData;
-
-    auth
-      .doCreateUserWithEmailAndPassword(email, password)
-      .then(authUser => {
-        console.log("new user was registered");
-        return {
-          [authUser.user.uid]: {
-            username,
-            email
-          }
-        };
-      })
-      .then(userData => firestore.doCreateUserProfile(userData))
-      .then(() => {
-        console.log("user profile was created");
+    const data = {
+      email: formData.email,
+      password: formData.password,
+      username: formData.username
+    };
+    onRegister(data)
+      .then(res => {
+        console.log(res);
         this.setState({ loading: false });
-        this.props.history.goBack();
+        this.props.history.push("/login");
       })
-      .catch(err => {
-        console.log("error creating user profile", err);
-        this.setState({ loading: false, error: true });
+      .catch(error => {
+        // handle error
+        console.log(error.response);
+        this.setState({ loading: false });
       });
   };
 
-  onSubmitLoginForm = (event, email, password) => {
+  onSubmitLoginForm = (event, data, toggleAuth) => {
     event.preventDefault();
     this.setState({ loading: true });
-
-    auth
-      .doSignInWithEmailAndPassword(email, password)
-      .then(() => {
+    onLogin(data)
+      .then(res => {
+        console.log(res);
+        authenticateUser(res.data.token);
+        console.log(isUserAuthenticated());
         this.setState({ loading: false });
-        this.props.history.goBack();
+        toggleAuth();
+        this.props.history.push("/");
       })
       .catch(error => {
-        this.setState({ loading: false, error: true });
-        console.log(error);
+        // handle error
+        console.log(error.response);
+        this.setState({ loading: false });
       });
   };
 
   render() {
-    const { classes } = this.props;
-
-    let form =
-      this.props.match.url === "/join" ? (
-        <JoinFrom
-          onSubmit={this.onSubmitJoinFrom}
-          loading={this.state.loading}
-        />
-      ) : (
-        <LoginForm
-          onSubmit={this.onSubmitLoginForm}
-          loading={this.state.loading}
-        />
-      );
-
+    const { classes, match } = this.props;
     return (
       <div
         className={formStyle.container}
@@ -100,9 +89,26 @@ class Auth extends Component {
       >
         <div className={formStyle.formWrapper}>
           <Typography variant="headline" className={classes.root}>
-            {this.props.match.url === "/join" ? "Register" : "Login"}
+            {match.url === "/join" ? "Register" : "Login"}
           </Typography>
-          {form}
+          {match.url === "/join" ? (
+            <JoinFrom
+              onSubmit={this.onSubmitJoinFrom}
+              loading={this.state.loading}
+            />
+          ) : (
+            <AuthContext.Consumer>
+              {({ toggleAuth }) => {
+                return (
+                  <LoginForm
+                    onSubmit={this.onSubmitLoginForm}
+                    loading={this.state.loading}
+                    toggleAuth={toggleAuth}
+                  />
+                );
+              }}
+            </AuthContext.Consumer>
+          )}
         </div>
       </div>
     );

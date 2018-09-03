@@ -12,7 +12,7 @@ const ChartsPage = props => (
       <h1>Charts</h1>
       <div className={classes.Content}>
         <AppDataContext.Consumer>
-          {({ state }) => {
+          {state => {
             let cars = (
               <CircularProgress
                 color="secondary"
@@ -20,12 +20,12 @@ const ChartsPage = props => (
                 style={{ margin: "auto" }}
               />
             );
-            const { nominations, allCars, error } = state;
+            const { nominations, poll, error } = state;
 
             if (!error) {
               cars = nominations.map((nom, index) => {
                 //SORT DATA BY VOTES
-                const sortedCars = allCars[nom].sort(function(a, b) {
+                const sortedCars = poll[nom.nomination].sort(function(a, b) {
                   if (a.votes > b.votes) {
                     return 1;
                   }
@@ -36,7 +36,7 @@ const ChartsPage = props => (
                   return 0;
                 });
 
-                return <Charts key={nom} nomination={nom} cars={sortedCars} />;
+                return <Charts key={nom._id} nomination={nom.nomination} cars={sortedCars} />;
               });
             }
             return cars;

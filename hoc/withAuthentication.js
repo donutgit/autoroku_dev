@@ -1,45 +1,67 @@
 import React from "react";
-import AuthUserContext from "./AuthUserContext";
-import { auth, dbStore } from "../firebase/firebase";
+import AuthContext from "./AuthContext.js";
+import {
+  isUserAuthenticated,
+  deauthenticateUser
+} from "../modules/AuthHelpers";
+import { getUserData } from "../queries";
 
 const withAuthentication = Component =>
   class WithAuthentication extends React.Component {
     state = {
-      authUser: null,
-      userProfile: null
+      authenticated: false,
+      user: null
     };
 
     componentDidMount() {
-      auth.onAuthStateChanged(authUser => {
-        authUser
-          ? this.setState(() => ({ authUser }))
-          : this.setState(() => ({ authUser: null }));
-      });
-    }
-    componentDidUpdate(prevProps, prevState) {
-      if (this.state.authUser !== prevState.authUser) {
-        this.state.authUser
-          ? dbStore
-              .collection("userbase")
-              .doc("users")
-              .onSnapshot(
-                doc => {
-                  if (doc.exists) {
-                    const userProfile = doc.data()[this.state.authUser.uid];
-                    this.setState({ userProfile });
-                  } else console.log("doc doesnt exist");
-                },
-                error => console.log("error getting snapshot", error)
-              )
-          : this.setState({ userProfile: null });
+      // get user data if user authenticated
+      if (isUserAuthenticated()) {
+        this.getUserData();
       }
     }
 
+    toggleAuthenticateStatus = () => {
+      // check authenticated status and toggle state based on that
+      if (isUserAuthenticated()) {
+        this.getUserData();
+      } else {
+        this.setState({
+          authenticated: false,
+          user: null
+        });
+      }
+    };
+
+    getUserData = () => {
+      getUserData().then(({ data }) => {
+        if (data.user) {
+          this.setState({ authenticated: true, user: data.user });
+        }
+      });
+    };
+
+    onLogout = () => {
+      deauthenticateUser();
+      this.toggleAuthenticateStatus();
+    };
+
     render() {
+      console.log(
+        `[User --=${
+          this.state.authenticated ? "IS" : "IS NOT"
+        }=-- authenticated]`
+      );
       return (
-        <AuthUserContext.Provider value={this.state}>
+        <AuthContext.Provider
+          value={{
+            authenticated: this.state.authenticated,
+            user: this.state.user,
+            toggleAuth: this.toggleAuthenticateStatus,
+            onLogout: this.onLogout
+          }}
+        >
           <Component />
-        </AuthUserContext.Provider>
+        </AuthContext.Provider>
       );
     }
   };

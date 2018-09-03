@@ -11,7 +11,7 @@ const NavigationItems = props => (
     <NavigationItem link="/vote">Vote</NavigationItem>
     <NavigationItem link="/cars">Cars</NavigationItem>
     <NavigationItem link="/charts">Charts</NavigationItem>
-    <NavigationItem link="/console">Console</NavigationItem>
+    <NavigationItem link="/console" color="#F50057">Console</NavigationItem>
   </ul>
 );
 

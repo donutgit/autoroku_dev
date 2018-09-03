@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Link from "react-router-dom/Link";
-import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import { withRouter } from "react-router";
 //mui
+import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -49,7 +51,12 @@ class FirebaseList extends Component {
           <ListItemText inset primary="Firebase" />
           {this.state.open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={this.state.open} style={{backgroundColor: "#303030"}} timeout="auto" unmountOnExit>
+        <Collapse
+          in={this.state.open}
+          style={{ backgroundColor: "#303030" }}
+          timeout="auto"
+          unmountOnExit
+        >
           <List component="div" disablePadding>
             <Link to={`${match.url}/firebase/nominations`}>
               <ListItem button className={classes.nested}>
@@ -82,4 +89,7 @@ class FirebaseList extends Component {
   }
 }
 
-export default withStyles(styles)(FirebaseList);
+export default compose(
+  withStyles(styles),
+  withRouter
+)(FirebaseList);

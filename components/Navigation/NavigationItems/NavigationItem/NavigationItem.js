@@ -4,7 +4,10 @@ import NavLink from "react-router-dom/NavLink";
 import Button from "@material-ui/core/Button";
 
 const navigationItem = props => (
-  <li className={classes.NavigationItem}>
+  <li
+    className={classes.NavigationItem}
+    style={{ color: props.color || "inherit" }}
+  >
     {/* <Link to={props.link} className={props.active ? classes.active : null}>{props.children}</Link> */}
     {/* <NavLink to={props.link} exact activeClassName={classes.active}>{props.children}</NavLink> */}
     <Button

@@ -1,12 +1,17 @@
 import React from "react";
-
-import { auth } from "../../firebase";
+import AuthContext from "../../hoc/AuthContext";
 import Button from "@material-ui/core/Button";
 
 const SignOutButton = () => (
-  <Button fullWidth={true} color="secondary" onClick={auth.doSignOut}>
-    Sign Out
-  </Button>
+  <AuthContext.Consumer>
+    {({ onLogout }) => {
+      return (
+        <Button fullWidth={true} color="secondary" onClick={onLogout}>
+          Sign Out
+        </Button>
+      );
+    }}
+  </AuthContext.Consumer>
 );
 
 export default SignOutButton;

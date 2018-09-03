@@ -29,7 +29,6 @@ class MainPage extends Component {
   // }
 
   render() {
-    console.log(prizeImage);
     return (
       <React.Fragment>
         <section className={classes.Header} style={{backgroundImage: `url(${headerImage})`}}>

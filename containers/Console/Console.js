@@ -1,17 +1,16 @@
 import React from "react";
-// import AppDataContext from "../../hoc/AppDataContext";
-import AuthUserContext from "../../hoc/AuthUserContext";
-import ConsoleDrawer from "../../components/Console/ConsoleDrawer";
-import withAuthorization from "../../hoc/withAuthorization";
+// import { Redirect } from "react-router-dom";
+// import withAuthorization from "../../hoc/withAuthorization";
+// import AuthContext from "../../hoc/AuthContext";
+import ConsoleRoot from "../../components/Console/ConsoleRoot";
 
-const Console = props => (
-  <AuthUserContext.Consumer>
-    {({ authUser, userProfile }) => {
-      return <ConsoleDrawer user={authUser} profile={userProfile} />;
-    }}
-  </AuthUserContext.Consumer>
-);
+class Console extends React.Component {
+  render() {
+    return <ConsoleRoot />
+  }
+}
 
-const authCondition = authUser => !!authUser;
+// const authCondition = userData => userData.role === "Administrator";
 
-export default withAuthorization(authCondition)(Console);
+// export default withAuthorization(authCondition)(Console);
+export default Console;

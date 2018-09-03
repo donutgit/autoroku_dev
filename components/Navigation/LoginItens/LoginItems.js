@@ -25,11 +25,10 @@ class LoginItems extends Component {
   render() {
     // console.log(this.props.auth);
     const { anchorEl } = this.state;
-    const user = this.props.auth;
-
+    const { authenticated } = this.props;
     return (
       <ul className={classes.Login}>
-        {user ? (
+        {authenticated ? (
           <React.Fragment>
             <ButtonBase
               aria-owns={anchorEl ? "simple-menu" : null}
@@ -44,8 +43,20 @@ class LoginItems extends Component {
               open={Boolean(anchorEl)}
               onClose={this.handleClose}
             >
-              <MenuItem to="/console/edit-profile" onClick={this.handleClose} color="inherit" component={Link}>Edit Profile</MenuItem>
-              <MenuItem to="/console" onClick={this.handleClose} color="inherit" component={Link}>
+              <MenuItem
+                to="/console/edit-profile"
+                onClick={this.handleClose}
+                color="inherit"
+                component={Link}
+              >
+                Edit Profile
+              </MenuItem>
+              <MenuItem
+                to="/console"
+                onClick={this.handleClose}
+                color="inherit"
+                component={Link}
+              >
                 Console
               </MenuItem>
               <SignOutButton />

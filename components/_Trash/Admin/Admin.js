@@ -1,40 +1,44 @@
-import React, { Component } from "react";
-// import { withStyles } from "@material-ui/core/styles";
-import styles from "./Style.jsx";
-// import styles from "./Style.css";
-import IconButton from "@material-ui/core/IconButton";
-// import { Delete, Edit, Close, Favorite, Check } from "@material-ui/icons";
-// import Close from "@material-ui/icons/Close";
-// import Edit from "@material-ui/icons/Edit";
-// import Delete from "@material-ui/icons/Delete";
-// import Favorite from "@material-ui/icons/Favorite";
-import Check from "@material-ui/icons/Check";
+import React, { PureComponent } from "react";
+import axios from "axios";
+import { Button } from "@material-ui/core";
 
-class Admin extends Component {
+const nom = [
+  "Small Class",
+  "Economy",
+  "Compact",
+  "Buisness",
+  "Lux",
+  "Coupe / Sport",
+  "Electric / Hybrid",
+  "Crossover",
+  "SUV",
+  "Design",
+  "Price / Quality",
+  "Best Crossover / SUV 2018",
+  "Best Car 2018"
+];
+
+class Admin extends PureComponent {
   render() {
-    // console.log(this.props.classes);
-    const { classes } = this.props;
     return (
-      <div>
-        <h1>wat</h1>
-        {/* <Typography className={classes.Title}>TITLE</Typography>
-        <Typography classes={{ root: classes.Subtitle }}>SUBTITLE</Typography> */}
-        {/* <IconButton aria-label="Close" color="primary">
-          <Close />
-        </IconButton>
-        <IconButton aria-label="Close" color="primary">
-          <Edit />
-        </IconButton>
-        <IconButton aria-label="Close" color="primary">
-          <Delete />
-        </IconButton>
-        <IconButton aria-label="Close" color="primary">
-          <Favorite />
-        </IconButton> */}
-        <IconButton aria-label="Close" color="primary">
-          <Check />
-        </IconButton>
-      </div>
+      <React.Fragment>
+        <h1>this is madness</h1>
+        {nom.forEach(name => {
+          axios
+            .post("/api/nominations", {
+              name: name
+            })
+            .then(res => <p>{name + " " + res.data.success}</p>);
+        })}
+        <Button
+          variant="raised"
+          color="primary"
+          size="small"
+          style={{ width: "20%" }}
+        >
+          Toggle
+        </Button>
+      </React.Fragment>
     );
   }
 }

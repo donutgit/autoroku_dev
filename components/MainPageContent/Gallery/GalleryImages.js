@@ -3,7 +3,7 @@ import Link from "react-router-dom/Link";
 import Transition from "react-transition-group/Transition";
 //mui
 import IconButton from "@material-ui/core/IconButton";
-// import Link from '@material-ui/icons/Link';
+import LinkIcon from "@material-ui/icons/Link";
 import Favorite from "@material-ui/icons/Favorite";
 import Info from "@material-ui/icons/Info";
 
@@ -15,14 +15,12 @@ const transitionStyles = {
 };
 
 const GalleryImages = props => {
-  console.log("[GalleryImages RETURN]");
-  console.log(props);
   return (
     <div className={classes.Gallery}>
       {props.data.map((car, index) => {
         const duration = 650 + 150 * index;
         return (
-          <Transition in={true} appear={true} timeout={duration} key={car.id}>
+          <Transition in={true} appear={true} timeout={duration} key={car._id}>
             {state => {
               return (
                 <div
@@ -55,11 +53,11 @@ const GalleryImages = props => {
                         </IconButton>
                         <span> | </span>
                         <IconButton aria-label="Link" color="inherit">
-                          {/* <Link /> */}
+                          <LinkIcon />
                         </IconButton>
 
                         <span> | </span>
-                        <Link to={`/cars/${car.id}`} style={{ color: "#fff" }}>
+                        <Link to={`/cars/${car._id}`} style={{ color: "#fff" }}>
                           <IconButton aria-label="Info" color="inherit">
                             <Info />
                           </IconButton>

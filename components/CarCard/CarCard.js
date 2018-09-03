@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import NavLink from "react-router-dom/NavLink";
 import Transition from "react-transition-group/Transition";
-import { dbStore, deleteField } from "../../firebase/firebase";
 //mui
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -20,8 +19,6 @@ import Check from "@material-ui/icons/Check";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import withStyles from "@material-ui/core/styles/withStyles";
-// import ProgressiveImage from "react-progressive-bg-image";
-// import ProgressiveImage from "react-progressive-image-loading";
 import Social from "../Social/Social";
 import CarCardStyles from "./CarCardStyles";
 
@@ -39,30 +36,10 @@ class SimpleMediaCard extends PureComponent {
   state = {
     overlay: false
   };
-  deleteCarFromBase = id => {
-    if (this.props.user && this.props.user.role === "GODMODE") {
-      var confirmAction = window.top.confirm("u sure?");
-      if (confirmAction) {
-        dbStore
-          .collection("poll")
-          .doc("cars")
-          .update({
-            [id]: deleteField
-          })
-          .then(function() {
-            console.log("Document successfully deleted!");
-          })
-          .catch(function(error) {
-            // The document probably doesn't exist.
-            console.error("Error deleting field: ", error);
-          });
-      }
-    } else alert("Access denied");
-  };
 
   render() {
-    const { id, mark, model, imageUrl } = this.props.car;
-    const { page, classes, step, selected } = this.props;
+    const { _id, mark, model, imageUrl, votes } = this.props.car;
+    const { classes, step, selected } = this.props;
     return (
       <MuiThemeProvider theme={theme}>
         <Card
@@ -77,31 +54,6 @@ class SimpleMediaCard extends PureComponent {
             image={imageUrl}
             title="Contemplative Reptile"
           />
-          {/* <ProgressiveImage
-            src={imageUrl}
-            placeholder="https://firebasestorage.googleapis.com/v0/b/react-burger-99366.appspot.com/o/images%2Fplaceholder.png?alt=media&token=3d5405fe-a780-4224-b79a-d568c4fc5563"
-            style={{
-              height: 200,
-              backgroundSize: "cover",
-              backgroundPosition: "center"
-            }}
-          /> */}
-
-          {/* <ProgressiveImage
-            preview="https://firebasestorage.googleapis.com/v0/b/react-burger-99366.appspot.com/o/images%2Fplaceholder.png?alt=media&token=3d5405fe-a780-4224-b79a-d568c4fc5563"
-            src={imageUrl}
-            transitionTime={400}
-            render={(src, style) => (
-              <div
-                style={Object.assign(style, {
-                  backgroundImage: `url(${src})`,
-                  height: 200,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center"
-                })}
-              />
-            )}
-          /> */}
           <div className={classes.Checked}>
             <Check
               size={12}
@@ -110,11 +62,9 @@ class SimpleMediaCard extends PureComponent {
           </div>
           <CardContent>
             <Typography variant="headline" component="h2">
-              {mark + " " + model}
+              {`${mark} ${model}`}
             </Typography>
-            <Typography variant="body1">
-              {this.props.car.votes ? this.props.car.votes : 0}
-            </Typography>
+            <Typography variant="body1">{votes || 0}</Typography>
           </CardContent>
           <Transition
             in={this.state.overlay}
@@ -156,55 +106,35 @@ class SimpleMediaCard extends PureComponent {
               <div>
                 <Button
                   variant="raised"
-                  disabled={page === "EditCars" || selected ? true : false}
                   size="small"
+                  disabled={this.props.handleComplete ? false : true}
                   color="primary"
                   className={classes.voteButtons}
                   onClick={() => this.props.handleComplete(mark, model, step)}
                 >
                   Vote
                 </Button>
-
                 <Button
                   variant="raised"
                   color="primary"
                   size="small"
                   component={NavLink}
-                  to={`/cars/${id}`}
+                  to={`/cars/${_id}`}
                   exact
                 >
                   Info
                 </Button>
               </div>
               <div>
-                <IconButton
-                  aria-label="Like"
-                  color="primary"
-                  onClick={() => this.setState({ overlay: true })}
-                >
+                <IconButton aria-label="Like" color="primary">
                   <Favorite />
                 </IconButton>
-                {page === "EditCars" ? (
-                  <React.Fragment>
-                    <IconButton
-                      aria-label="Edit"
-                      disabled={page !== "EditCars"}
-                      onClick={() =>
-                        this.props.openCarDialog("edit", this.props.car)
-                      }
-                      color="primary"
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={() => this.deleteCarFromBase(id)}
-                      color="secondary"
-                    >
-                      <Delete />
-                    </IconButton>
-                  </React.Fragment>
-                ) : null}
+                <IconButton aria-label="Edit" color="primary">
+                  <Edit />
+                </IconButton>
+                <IconButton aria-label="Delete" color="secondary">
+                  <Delete />
+                </IconButton>
               </div>
             </div>
           </CardActions>

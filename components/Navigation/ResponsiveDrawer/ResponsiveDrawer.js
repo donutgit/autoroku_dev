@@ -12,7 +12,7 @@ import Menu from "@material-ui/icons/Menu";
 import NavigationItems from "../NavigationItems/NavigationItems";
 import Logo from "../../../assets/Logo_autoroku_2018.png";
 import LoginItems from "../LoginItens/LoginItems";
-import AuthUserContext from "../../../hoc/AuthUserContext";
+import AuthContext from "../../../hoc/AuthContext";
 
 const drawerWidth = 240;
 
@@ -120,14 +120,14 @@ class ResponsiveDrawer extends React.Component {
             <NavLink to="/" className={classes.Logo}>
               <img src={Logo} alt="Logo" />
             </NavLink>
-            <AuthUserContext.Consumer>
-              {({ authUser }) => (
+            <AuthContext.Consumer>
+              {({ authenticated }) => (
                 <React.Fragment>
-                  <NavigationItems auth={authUser} type="header" />
-                  <LoginItems auth={authUser} />
+                  <NavigationItems type="header" />
+                  <LoginItems authenticated={authenticated} />
                 </React.Fragment>
               )}
-            </AuthUserContext.Consumer>
+            </AuthContext.Consumer>
           </Toolbar>
         </AppBar>
         <Hidden mdUp>

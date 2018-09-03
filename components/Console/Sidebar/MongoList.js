@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import Link from "react-router-dom/Link";
-import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import { withRouter } from "react-router";
+
 //mui
+import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -82,4 +85,7 @@ class MongoList extends Component {
   }
 }
 
-export default withStyles(styles)(MongoList);
+export default compose(
+  withStyles(styles),
+  withRouter
+)(MongoList);

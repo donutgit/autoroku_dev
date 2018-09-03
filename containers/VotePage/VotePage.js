@@ -172,7 +172,7 @@ class VotePage extends React.PureComponent {
     // SET STEP AS COMPLETED
     const completed = new Set(this.state.completed);
     completed.add(this.state.activeStep);
-    const progress = Math.floor(completed.size / this.totalSteps() * 100);
+    const progress = Math.floor((completed.size / this.totalSteps()) * 100);
     this.setState({
       completed,
       choosedCars,
@@ -299,7 +299,7 @@ class VotePage extends React.PureComponent {
             />
           ) : (
             <AppDataContext.Consumer>
-              {({ state }) => {
+              {state => {
                 let cars = (
                   <CircularProgress
                     color="secondary"
@@ -308,16 +308,15 @@ class VotePage extends React.PureComponent {
                   />
                 );
                 const currentNomination = this.currentNomination();
-                let NominationCars = state.allCars[currentNomination];
+                let NominationCars = state.poll[currentNomination];
                 if (!state.error) {
-                // if (false) {
                   cars = NominationCars.map(car => {
                     return (
                       <Transition
                         in={true}
                         appear={true}
                         timeout={200}
-                        key={car.id}
+                        key={car._id}
                       >
                         {state => {
                           return (
@@ -330,7 +329,6 @@ class VotePage extends React.PureComponent {
                               }}
                             >
                               <CarCard
-                                page="Vote"
                                 car={car}
                                 step={activeStep}
                                 selected={

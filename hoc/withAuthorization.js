@@ -1,23 +1,26 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { firebase } from "../firebase";
-import AppUserContext from "../hoc/AuthUserContext";
+import { isUserAuthenticated, getToken } from "../modules/AuthHelpers";
+import { getUserData } from "../queries";
+import AuthContext from "../hoc/AuthContext";
 
 const withAuthorization = authCondition => Component => {
   class WithAuthorization extends React.Component {
     componentDidMount() {
-      firebase.auth.onAuthStateChanged(authUser => {
-        if (!authCondition(authUser)) {
-          this.props.history.push("/login");
-        }
-      });
+      if (isUserAuthenticated()) {
+        getUserData(getToken()).then(({ data }) => {
+          if (!authCondition(data.user)) {
+            this.props.history.push("/login");
+          }
+        });
+      }
     }
 
     render() {
       return (
-        <AppUserContext.Consumer>
-          {authUser => (authUser ? <Component /> : null)}
-        </AppUserContext.Consumer>
+        <AuthContext.Consumer>
+          {({ authenticated }) => (authenticated ? <Component /> : null)}
+        </AuthContext.Consumer>
       );
     }
   }

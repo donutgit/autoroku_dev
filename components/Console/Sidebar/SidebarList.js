@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "react-router-dom/Link";
+import compose from "recompose/compose";
+import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 //mui
 import { withStyles } from "@material-ui/core/styles";
@@ -16,6 +18,8 @@ import Home from "@material-ui/icons/Home";
 import ChartsList from "./ChartsList";
 import FirebaseList from "./FirebaseList";
 import MongoList from "./MongoList";
+import AccountList from "./AccountList";
+import { Divider } from "@material-ui/core";
 
 const styles = theme => ({
   root: {
@@ -45,6 +49,9 @@ class NestedList extends React.Component {
 
     return (
       <div className={classes.root}>
+        <Divider />
+        <AccountList />
+        <Divider />
         <List
           component="nav"
           subheader={
@@ -59,9 +66,9 @@ class NestedList extends React.Component {
               <ListItemText inset primary="Dashboard" />
             </ListItem>
           </Link>
-          <FirebaseList match={match} />
-          <MongoList match={match} />
-          <ChartsList match={match} />
+          <FirebaseList />
+          <MongoList />
+          <ChartsList />
           <ListItem button>
             <ListItemIcon>
               <Settings />
@@ -86,4 +93,7 @@ NestedList.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(NestedList);
+export default compose(
+  withStyles(styles),
+  withRouter
+)(NestedList);

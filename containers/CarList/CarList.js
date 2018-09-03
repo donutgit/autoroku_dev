@@ -5,7 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import CarPollNavigation from "../../components/CarListComp/CarPollNavigation";
 import EditCars from "../../components/CarListComp/EditCars";
 import classes from "./CarList.css";
-import AuthUserContext from "../../hoc/AuthUserContext";
+//APOLLO
+// import { Query } from "react-apollo";
+// import gql from "graphql-tag";
+//
 
 const navList = {
   label: [
@@ -32,6 +35,15 @@ const navList = {
   ]
 };
 
+
+// const QUERY = gql`
+//   {
+//     cars {
+//       ...carData
+//     }
+//   }
+// `;
+
 class CarPoll extends PureComponent {
   render() {
     return (
@@ -40,15 +52,12 @@ class CarPoll extends PureComponent {
           <section className={classes.Root}>
             <div className={classes.Wrapper}>
               <CarPollNavigation nav={navList} />
-              <AuthUserContext>
-                {({ userProfile }) => (
-                  <AppDataContext.Consumer>
-                    {({ state }) => (
-                      <EditCars user={userProfile} appData={state} navId={navList.hash} />
-                    )}
-                  </AppDataContext.Consumer>
-                )}
-              </AuthUserContext>
+              <AppDataContext.Consumer>
+                {data => {
+                  return <EditCars data={data} navId={navList.hash} />;
+                }}
+              </AppDataContext.Consumer>
+
             </div>
           </section>
         </Grid>

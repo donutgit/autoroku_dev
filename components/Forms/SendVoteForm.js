@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import { v4 as generateRandomID } from "uuid/v4";
 import { withFormik } from "formik";
 import Yup from "yup";
-import { dbStore } from "../../firebase/firebase";
 //mui
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import classes from "./FormStyles.css";
 import { DisplayFormikState } from "./helper";
+//q
+import { addVote } from "../../queries";
 
 // Our inner form component. Will be wrapped with Formik({..})
 class MyInnerForm extends Component {
@@ -19,26 +19,18 @@ class MyInnerForm extends Component {
   submitFormHandler = event => {
     event.preventDefault();
     this.setState({ loading: true });
-    const userId = generateRandomID();
     const data = {
-      [userId]: {
-        vote_date: new Date(),
-        user_data: this.props.values,
-        vote_reslt: this.props.choosedCars
-      }
+      user_data: this.props.values,
+      vote_reslt: this.props.choosedCars
     };
+    console.log(data);
 
-    dbStore
-      .collection("poll")
-      .doc("votes")
-      .update(data)
-      .then(res => {
+    addVote(data).then(res => {
+      if (res.status === 200) {
         console.log("Your vote was accepted!");
         this.setState({ loading: false });
-      })
-      .catch(function(error) {
-        console.error("Error in accepting vote: ", error);
-      });
+      }
+    });
   };
 
   render() {
@@ -113,7 +105,9 @@ class MyInnerForm extends Component {
     );
     return (
       <div className={classes.formWrapper}>
-        <h3 style={{textAlign: "center"}}>All steps completed! Submit form to finish vote</h3>
+        <h3 style={{ textAlign: "center" }}>
+          All steps completed! Submit form to finish vote
+        </h3>
         {form}
         {this.state.loading ? (
           <div className={classes.loadingWrapper}>
