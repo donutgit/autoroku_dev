@@ -3,18 +3,13 @@ import React, { Component } from "react";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 //nodejs
-import JoinFrom from "../../components/Forms/JoinFromNode";
-import LoginForm from "../../components/Forms/LoginFormNode";
-import {
-  authenticateUser,
-  isUserAuthenticated
-} from "../../modules/AuthHelpers";
-///query
-import { onRegister, onLogin } from "../../queries";
+import JoinFrom from "../components/Forms/JoinFromNode";
+import LoginForm from "../components/Forms/LoginFormNode";
+import { authenticateUser } from "../modules/AuthHelpers";
 
-import formStyle from "./Auth.css";
-import bgImage from "../../assets/bg.png";
-import AuthContext from "../../hoc/AuthContext";
+import formStyle from "../styles/Auth.css";
+import bgImage from "../assets/bg.png";
+import AuthContext from "../hoc/AuthContext";
 
 const styles = theme => ({
   root: {
@@ -40,42 +35,49 @@ class Auth extends Component {
     error: false
   };
 
-  onSubmitJoinFrom = (event, formData) => {
+  onSubmitJoinFrom = (event, formData, mutate) => {
     this.setState({ loading: true });
     event.preventDefault();
-    const data = {
-      email: formData.email,
-      password: formData.password,
-      username: formData.username
-    };
-    onRegister(data)
-      .then(res => {
-        console.log(res);
+    mutate({
+      variables: {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      }
+    })
+      .then(({ data: { login } }) => {
         this.setState({ loading: false });
         this.props.history.push("/login");
       })
       .catch(error => {
-        // handle error
-        console.log(error.response);
+        console.log(error);
         this.setState({ loading: false });
       });
   };
 
-  onSubmitLoginForm = (event, data, toggleAuth) => {
-    event.preventDefault();
+  onSubmitLoginForm = (event, formData, mutate, toggleAuth) => {
     this.setState({ loading: true });
-    onLogin(data)
-      .then(res => {
-        console.log(res);
-        authenticateUser(res.data.token);
-        console.log(isUserAuthenticated());
-        this.setState({ loading: false });
-        toggleAuth();
-        this.props.history.push("/");
+    event.preventDefault();
+    mutate({
+      variables: {
+        email: formData.email,
+        password: formData.password
+      }
+    })
+      .then(({ data: { login } }) => {
+        console.log(login);
+        if (login.ok) {
+          authenticateUser(login.token, login.refToken, login.exp);
+          toggleAuth();
+          this.setState({ loading: false });
+          this.props.history.push("/");
+        } else {
+          console.log(login.errors[0].message);
+          this.setState({ loading: false });
+        }
       })
       .catch(error => {
-        // handle error
-        console.log(error.response);
+        console.log(error);
         this.setState({ loading: false });
       });
   };

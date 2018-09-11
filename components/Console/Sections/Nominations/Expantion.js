@@ -11,6 +11,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import { Mutation } from "react-apollo";
+import { REMOVE_NOMINATION, GET_CARS_NOMINATIONS } from "../../../../graphql";
 
 const styles = theme => ({
   root: {
@@ -53,7 +55,7 @@ const styles = theme => ({
 
 function DetailedExpansionPanel(props) {
   const { classes } = props;
-  const { nomination, carsAmount, cars } = props.data;
+  const { id, nomination, carsAmount, cars } = props.data;
   return (
     <div className={classes.root}>
       <ExpansionPanel defaultExpanded={false}>
@@ -99,18 +101,25 @@ function DetailedExpansionPanel(props) {
             size="small"
             variant="raised"
             color="primary"
-            onClick={() => props.onModal("update", props.data.id)}
+            onClick={() => props.onModal("Update", { id, name: nomination })}
           >
             Edit
           </Button>
-          <Button
-            size="small"
-            variant="raised"
-            color="secondary"
-            onClick={() => props.onDelete(props.data.id)}
+          <Mutation
+            mutation={REMOVE_NOMINATION}
+            refetchQueries={[{ query: GET_CARS_NOMINATIONS }]}
           >
-            Remove Nomination
-          </Button>
+            {mutate => (
+              <Button
+                size="small"
+                variant="raised"
+                color="secondary"
+                onClick={() => mutate({ variables: { id: id } })}
+              >
+                Remove Nomination
+              </Button>
+            )}
+          </Mutation>
         </ExpansionPanelActions>
       </ExpansionPanel>
     </div>

@@ -38,8 +38,10 @@ class SimpleMediaCard extends PureComponent {
   };
 
   render() {
-    const { _id, mark, model, imageUrl, votes } = this.props.car;
+    const { id, mark, model, imageUrl, votes } = this.props.car;
     const { classes, step, selected } = this.props;
+    let img = imageUrl.split("upload/");
+    let url = img[0] + "upload/h_400,f_auto/" + img[1];
     return (
       <MuiThemeProvider theme={theme}>
         <Card
@@ -51,9 +53,17 @@ class SimpleMediaCard extends PureComponent {
         >
           <CardMedia
             className={classes.media}
-            image={imageUrl}
+            image={url}
             title="Contemplative Reptile"
           />
+          {/* <Image
+            cloudName="dxfogjj18"
+            publicId={imageUrl}
+            // width="340"
+            height="200"
+            crop="fill"
+            fetchFormat="auto"
+          /> */}
           <div className={classes.Checked}>
             <Check
               size={12}
@@ -119,14 +129,18 @@ class SimpleMediaCard extends PureComponent {
                   color="primary"
                   size="small"
                   component={NavLink}
-                  to={`/cars/${_id}`}
+                  to={`/cars/${id}`}
                   exact
                 >
                   Info
                 </Button>
               </div>
               <div>
-                <IconButton aria-label="Like" color="primary">
+                <IconButton
+                  aria-label="Like"
+                  color="primary"
+                  onClick={() => this.setState({ overlay: true })}
+                >
                   <Favorite />
                 </IconButton>
                 <IconButton aria-label="Edit" color="primary">

@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 // import Button from "@material-ui/core/Button";
 import classes from "./ContactUs.css";
-import { HeaderUnderline } from "../../../containers/MainPage/MainPage.css";
+import { HeaderUnderline } from "../../../styles/MainPage.css";
 import ButtonSvg from "../../UI/Button/ButtonSvg";
 
 const ContactUs = props => (

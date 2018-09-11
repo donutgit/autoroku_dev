@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import axios from "axios";
-// import { v4 as generateRandomID } from "uuid";
-// import { dbStore, storage } from "../../../../../firebase/firebase";
+import { Mutation } from "react-apollo";
 //mui
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -17,6 +16,11 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import FileUpload from "@material-ui/icons/FileUpload";
 
 import classes from "./AddCarFrom.css";
+import {
+  ADD_CAR,
+  UPDATE_CAR,
+  GET_CARS_NOMINATIONS
+} from "../../../../../graphql";
 
 const nominations = [
   "Small Class",
@@ -74,17 +78,34 @@ class AddCarForm extends PureComponent {
     }
   }
 
-  onformSubmit = event => {
+  onformSubmit = (event, mutation) => {
     event.preventDefault();
     if (this.props.formData) {
-      this.props.onUpdate(this.props.formData._id, {
-        ...this.state.formData
-      });
+      const { formData } = this.state;
+      mutation({
+        variables: {
+          id: this.props.formData.id,
+          mark: formData.mark,
+          model: formData.model,
+          nominations: formData.nominations,
+          votes: formData.votes,
+          premium: formData.premium,
+          imageUrl: formData.imageUrl
+        }
+      }).then(res => console.log(res));
       this.props.onClose();
     } else {
-      this.props.onAdd({
-        ...this.state.formData
-      });
+      const { formData } = this.state;
+      mutation({
+        variables: {
+          mark: formData.mark,
+          model: formData.model,
+          nominations: formData.nominations,
+          votes: formData.votes,
+          premium: formData.premium,
+          imageUrl: formData.imageUrl
+        }
+      }).then(res => console.log(res));
       this.props.onClose();
     }
   };
@@ -122,162 +143,143 @@ class AddCarForm extends PureComponent {
       } = event;
       const file = files[0];
       var formData = new FormData();
-      formData.append("image", file);
-      formData.append("upload_preset", "szgh8dsj");
-
+      formData.append("file", file);
+      formData.append("upload_preset", "hhj796ue");
       axios
         .post(
           `https://api.cloudinary.com/v1_1/dxfogjj18/image/upload`,
           formData
         )
-        .then(res => console.log(res));
-
-      // axios
-      //   .post("http://localhost:3001/api/upload", formData, {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data"
-      //     }
-      //   })
-      //   .then(res => {
-      //     console.log(res);
-      //     this.setState(({ formData }) => {
-      //       const nextData = {
-      //         ...formData,
-      //         imageUrl: res.data.secure_url
-      //       };
-      //       return { formData: nextData };
-      //     });
-      //   })
-      //   .catch(err => console.log(err));
-
-      // storage
-      //   .ref("cars/lg")
-      //   .child(filename)
-      //   .put(file)
-      //   .then(snapshot => {
-      //     return snapshot.ref.getDownloadURL();
-      //   })
-      //   .then(url => {
-      //     this.setState({ imageUrl: url, filename: filename });
-      //   });
+        .then(res => {
+          if (res.status === 200) {
+            this.setState(({ formData }) => {
+              const nextData = {
+                ...formData,
+                imageUrl: res.data.url
+              };
+              return { formData: nextData };
+            });
+          } else console.log("Error! Image wasnt uploaded");
+        });
     }
   };
 
   render() {
-    console.log(this.state);
-    console.log(this.props);
     const { formData } = this.state;
-    let form = (
-      <form
-        onSubmit={event => this.onformSubmit(event)}
-        className={this.state.loading ? classes.loading : null}
-      >
-        <FormControl>
-          <InputLabel htmlFor="select-multiple-checkbox">
-            Nominations
-          </InputLabel>
-          <Select
-            multiple
-            name="nominations"
-            value={formData.nominations}
-            onChange={this.handleChange("nominations")}
-            input={<Input id="select-multiple-checkbox" />}
-            renderValue={selected => selected.join(", ")}
-            // MenuProps={MenuProps}
-          >
-            {nominations.map(nom => (
-              <MenuItem key={nom} value={nom}>
-                <Checkbox checked={formData.nominations.indexOf(nom) > -1} />
-                <ListItemText primary={nom} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          margin="normal"
-          id="mark"
-          label="Mark"
-          type="text"
-          value={formData.mark}
-          onChange={this.handleChange("mark")}
-        />
-        <TextField
-          margin="normal"
-          id="model"
-          label="Model"
-          type="text"
-          value={formData.model}
-          onChange={this.handleChange("model")}
-        />
-        <TextField
-          margin="normal"
-          id="description"
-          label="Description"
-          type="text"
-          multiline
-          rowsMax="4"
-          value={formData.description}
-          onChange={this.handleChange("description")}
-        />
-        <Checkbox
-          checked={formData.premium}
-          id="premium"
-          onChange={this.handleChange("premium")}
-          value="premium"
-          color="primary"
-        />
-        <TextField
-          margin="normal"
-          id="votes"
-          label="Votes"
-          type="text"
-          value={formData.votes}
-          // onChange={this.handleChange("votes")}
-        />
-        <input
-          accept="image/*"
-          className={classes.hideInput}
-          id="uploadImage"
-          multiple
-          type="file"
-          onChange={this.handleChange()}
-        />
-        <React.Fragment>
-          <div
-            className={classes.imageContainer}
-            style={{ backgroundImage: `url(${formData.imageUrl})` }}
-          />
-          <label htmlFor="uploadImage">
-            <Button
-              variant="raised"
-              component="span"
-              disabled={formData.mark && formData.model ? false : true}
-            >
-              Upload Image
-              <FileUpload className={classes.rightIcon} />
-              {/* <label htmlFor="uploadImage" /> */}
-            </Button>
-            <span style={{ marginLeft: "8px" }}>
-              {this.state.filename ? this.state.filename : null}
-            </span>
-          </label>
-        </React.Fragment>
-
-        <Button
-          variant="raised"
-          color="primary"
-          type="submit"
-          disabled={!formData.imageUrl}
-          fullWidth
-        >
-          {this.props.formData ? "Edit car" : "Add new car"}
-        </Button>
-      </form>
-    );
 
     return (
       <div className={classes.formWrapper}>
-        {form}
+        <Mutation
+          mutation={this.props.formData ? UPDATE_CAR : ADD_CAR}
+          refetchQueries={[{ query: GET_CARS_NOMINATIONS }]}
+        >
+          {mutation => {
+            return (
+              <form
+                onSubmit={event => this.onformSubmit(event, mutation)}
+                className={this.state.loading ? classes.loading : null}
+              >
+                <FormControl>
+                  <InputLabel htmlFor="select-multiple-checkbox">
+                    Nominations
+                  </InputLabel>
+                  <Select
+                    multiple
+                    name="nominations"
+                    value={formData.nominations}
+                    onChange={this.handleChange("nominations")}
+                    input={<Input id="select-multiple-checkbox" />}
+                    renderValue={selected => selected.join(", ")}
+                    // MenuProps={MenuProps}
+                  >
+                    {nominations.map(nom => (
+                      <MenuItem key={nom} value={nom}>
+                        <Checkbox
+                          checked={formData.nominations.indexOf(nom) > -1}
+                        />
+                        <ListItemText primary={nom} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  margin="normal"
+                  id="mark"
+                  label="Mark"
+                  type="text"
+                  value={formData.mark}
+                  onChange={this.handleChange("mark")}
+                />
+                <TextField
+                  margin="normal"
+                  id="model"
+                  label="Model"
+                  type="text"
+                  value={formData.model}
+                  onChange={this.handleChange("model")}
+                />
+                <TextField
+                  margin="normal"
+                  id="description"
+                  label="Description"
+                  type="text"
+                  multiline
+                  rowsMax="4"
+                  value={formData.description}
+                  onChange={this.handleChange("description")}
+                />
+                <Checkbox
+                  checked={formData.premium}
+                  id="premium"
+                  onChange={this.handleChange("premium")}
+                  value="premium"
+                  color="primary"
+                />
+                <TextField
+                  margin="normal"
+                  id="votes"
+                  label="Votes"
+                  type="text"
+                  value={formData.votes}
+                  // onChange={this.handleChange("votes")}
+                />
+                <input
+                  accept="image/*"
+                  className={classes.hideInput}
+                  id="uploadImage"
+                  multiple
+                  type="file"
+                  onChange={this.handleChange()}
+                />
+                <React.Fragment>
+                  <div
+                    className={classes.imageContainer}
+                    style={{ backgroundImage: `url(${formData.imageUrl})` }}
+                  />
+                  <label htmlFor="uploadImage">
+                    <Button variant="raised" component="span">
+                      Upload Image
+                      <FileUpload className={classes.rightIcon} />
+                    </Button>
+                    <span style={{ marginLeft: "8px" }}>
+                      {this.state.filename ? this.state.filename : null}
+                    </span>
+                  </label>
+                </React.Fragment>
+
+                <Button
+                  variant="raised"
+                  color="primary"
+                  type="submit"
+                  disabled={!formData.imageUrl}
+                  fullWidth
+                >
+                  {this.props.formData ? "Edit car" : "Add new car"}
+                </Button>
+              </form>
+            );
+          }}
+        </Mutation>
         {this.state.loading ? (
           <div className={classes.loadingWrapper}>
             <CircularProgress size={50} color="secondary" />

@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 // import Spinner from "../../UI/Spinner/Spinner";
 import PostCard from "./PostCard";
 import classes from "./News.css";
-import { TitleWrap, TitleUnderline } from "../../../containers/MainPage/MainPage.css";
+import { TitleWrap, TitleUnderline } from "../../../styles/MainPage.css";
 
 const News = props => {
   // console.log(props);

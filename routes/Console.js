@@ -2,7 +2,7 @@ import React from "react";
 // import { Redirect } from "react-router-dom";
 // import withAuthorization from "../../hoc/withAuthorization";
 // import AuthContext from "../../hoc/AuthContext";
-import ConsoleRoot from "../../components/Console/ConsoleRoot";
+import ConsoleRoot from "../components/Console/ConsoleRoot";
 
 class Console extends React.Component {
   render() {

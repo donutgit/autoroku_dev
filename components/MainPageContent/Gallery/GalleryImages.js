@@ -19,8 +19,10 @@ const GalleryImages = props => {
     <div className={classes.Gallery}>
       {props.data.map((car, index) => {
         const duration = 650 + 150 * index;
+        let img = car.imageUrl.split("upload/");
+        let url = img[0] + "upload/h_400,f_auto/" + img[1];
         return (
-          <Transition in={true} appear={true} timeout={duration} key={car._id}>
+          <Transition in={true} appear={true} timeout={duration} key={car.id}>
             {state => {
               return (
                 <div
@@ -34,7 +36,7 @@ const GalleryImages = props => {
                   <div
                     className={classes.ImageBlock}
                     style={{
-                      backgroundImage: `url(${car.imageUrl})`
+                      backgroundImage: `url(${url})`
                     }}
                   >
                     <div className={classes.TitleWrap}>
@@ -57,7 +59,7 @@ const GalleryImages = props => {
                         </IconButton>
 
                         <span> | </span>
-                        <Link to={`/cars/${car._id}`} style={{ color: "#fff" }}>
+                        <Link to={`/cars/${car.id}`} style={{ color: "#fff" }}>
                           <IconButton aria-label="Info" color="inherit">
                             <Info />
                           </IconButton>

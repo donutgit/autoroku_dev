@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
-import { dbStore } from "../../../../firebase/firebase";
-import { storage } from "../../../../firebase/firebase";
+// import { dbStore } from "../../../../firebase/firebase";
+// import { storage } from "../../../../firebase/firebase";
 //mui
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";

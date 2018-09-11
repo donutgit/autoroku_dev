@@ -10,6 +10,9 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+//apollo
+import { Mutation } from "react-apollo";
+import { REMOVE_USER, GET_USERS } from "../../../../graphql";
 
 const styles = theme => ({
   root: {
@@ -51,7 +54,6 @@ const styles = theme => ({
 });
 
 class UsersList extends Component {
-
   render() {
     const { classes, user } = this.props;
     return (
@@ -62,7 +64,9 @@ class UsersList extends Component {
               <Typography className={classes.heading}>{user.email}</Typography>
             </div>
             <div className={classes.column}>
-              <Typography className={classes.secondaryHeading}>{user.date}</Typography>
+              <Typography className={classes.secondaryHeading}>
+                {user.date}
+              </Typography>
             </div>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.details}>
@@ -73,7 +77,8 @@ class UsersList extends Component {
             </div>
             <div className={classNames(classes.column, classes.helper)}>
               <Typography variant="caption">
-                Select your destination of choice<br />
+                Select your destination of choice
+                <br />
                 <a href="#sub-labels-and-columns" className={classes.link}>
                   Learn more
                 </a>
@@ -82,9 +87,21 @@ class UsersList extends Component {
           </ExpansionPanelDetails>
           <Divider />
           <ExpansionPanelActions>
-            <Button size="small" variant="raised" color="secondary" onClick={() => this.props.onDelete(user._id)}>
-              Remove User
-            </Button>
+            <Mutation
+              mutation={REMOVE_USER}
+              refetchQueries={[{ query: GET_USERS }]}
+            >
+              {mutate => (
+                <Button
+                  size="small"
+                  variant="raised"
+                  color="secondary"
+                  onClick={() => mutate({ variables: { id: user.id } })}
+                >
+                  Remove User
+                </Button>
+              )}
+            </Mutation>
             <Button size="small" variant="raised" color="primary">
               Close
             </Button>

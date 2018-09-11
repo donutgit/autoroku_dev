@@ -14,7 +14,7 @@ import SidebarHeader from "./Sidebar/SidebarHeader";
 import SidebarList from "./Sidebar/SidebarList";
 //SECTIONS
 import Dashboard from "./Sections/Dashboard/Dashboard";
-import EditProfile from "./Sections/Profile/EditProfile";
+// import EditProfile from "./Sections/Profile/EditProfile";
 import Profile from "./Sections/Profile/Profile";
 import Nominations from "./Sections/Nominations/Nominations";
 import Cars from "./Sections/Cars/Cars";
@@ -61,7 +61,7 @@ class ConsoleDrawer extends React.PureComponent {
           </Drawer>
           <main className={classes.content}>
             <Route path={`${match.url}/profile`} component={Profile} />
-            <Route
+            {/* <Route
               path={`${match.url}/edit-profile`}
               render={props => (
                 <EditProfile
@@ -70,7 +70,7 @@ class ConsoleDrawer extends React.PureComponent {
                   {...props}
                 />
               )}
-            />
+            /> */}
             <Route
               path={`${match.url}/mongo/nominations`}
               component={Nominations}

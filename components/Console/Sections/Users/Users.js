@@ -1,38 +1,24 @@
 import React, { Component } from "react";
-import Spinner from "../../../UI/Spinner/Spinner";
 import UsersList from "./UsersList";
+import { Query } from "react-apollo";
+import { GET_USERS } from "../../../../graphql";
+import Spinner from "../../../UI/Spinner/Spinner";
 //query
-import { getUsers, deleteUser } from "../../../../queries";
 
 class Users extends Component {
-  state = {
-    users: null
-  };
-
-  onInit = () => {
-    getUsers().then(res => {
-      this.setState({ users: res.data });
-    });
-  };
-
-  onDelete = id => {
-    deleteUser(id).then(res => {
-      this.onInit();
-    });
-  };
-
-  componentDidMount() {
-    this.onInit();
-  }
-
   render() {
-    const { users } = this.state;
-    return users ? (
-      users.map(user => (
-        <UsersList key={user._id} user={user} onDelete={this.onDelete} />
-      ))
-    ) : (
-      <Spinner />
+    return (
+      <Query query={GET_USERS}>
+        {client => {
+          const { loading, error, data } = client;
+          if (loading) return <Spinner />;
+          if (error) return `Error! ${error.message}`;
+          console.log(data);
+          return data.users.map(user => (
+            <UsersList key={user.id} user={user} onDelete={this.onDelete} />
+          ));
+        }}
+      </Query>
     );
   }
 }

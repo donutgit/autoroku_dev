@@ -1,5 +1,5 @@
 import React from "react";
-import AppDataContext from "../../hoc/AppDataContext";
+import AppDataContext from "../hoc/AppDataContext";
 import Transition from "react-transition-group/Transition";
 
 //mui
@@ -11,20 +11,19 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 // import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import CircularProgress from "@material-ui/core/CircularProgress";
 //icons
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 import Flag from "@material-ui/icons/Flag";
 //my components
-import CarCard from "../../components/CarCard/CarCard";
-import Social from "../../components/Social/Social";
-import reactLogo from "../../assets/react_logo.png";
-import VotePageStyles from "./VotePageStyles";
-import SendVoteForm from "../../components/Forms/SendVoteForm";
+import CarCard from "../components/CarCard/CarCard";
+import Social from "../components/Social/Social";
+import SendVoteForm from "../components/Forms/SendVoteForm";
 import StepLabel from "@material-ui/core/StepLabel";
-
-import MainBg from "../../assets/bg_l.png";
+//styles
+import reactLogo from "../assets/react_logo.png";
+import MainBg from "../assets/bg_l.png";
+import VotePageStyles from "../styles/VotePageStyles";
 
 const transitionStyles = {
   entering: { opacity: 0, transform: "translateX(21px)" },
@@ -299,53 +298,49 @@ class VotePage extends React.PureComponent {
             />
           ) : (
             <AppDataContext.Consumer>
-              {state => {
-                let cars = (
-                  <CircularProgress
-                    color="secondary"
-                    size={100}
-                    className={classes.LoadingCircle}
-                  />
-                );
+              {data => {
                 const currentNomination = this.currentNomination();
-                let NominationCars = state.poll[currentNomination];
-                if (!state.error) {
-                  cars = NominationCars.map(car => {
-                    return (
-                      <Transition
-                        in={true}
-                        appear={true}
-                        timeout={200}
-                        key={car._id}
-                      >
-                        {state => {
-                          return (
-                            <div
-                              style={{
-                                transition: `all 300ms ease-in-out`,
-                                transform: "translateX(25px)",
-                                opacity: 0,
-                                ...transitionStyles[state]
-                              }}
-                            >
-                              <CarCard
-                                car={car}
-                                step={activeStep}
-                                selected={
-                                  this.state.choosedCars[currentNomination] ===
-                                  car.mark + " " + car.model
-                                }
-                                handleComplete={this.handleComplete}
-                                carInfoHandler={this.carInfoHandler}
-                              />
-                            </div>
-                          );
-                        }}
-                      </Transition>
-                    );
-                  });
-                }
-                return <div className={classes.nominations}>{cars}</div>;
+                const NominationCars = data.poll[currentNomination];
+                return (
+                  <div className={classes.nominations}>
+                    {NominationCars.map(car => {
+                      return (
+                        <Transition
+                          in={true}
+                          appear={true}
+                          timeout={200}
+                          key={car.id}
+                        >
+                          {state => {
+                            return (
+                              <div
+                                style={{
+                                  transition: `all 300ms ease-in-out`,
+                                  transform: "translateX(25px)",
+                                  opacity: 0,
+                                  ...transitionStyles[state]
+                                }}
+                              >
+                                <CarCard
+                                  car={car}
+                                  step={activeStep}
+                                  selected={
+                                    this.state.choosedCars[
+                                      currentNomination
+                                    ] ===
+                                    car.mark + " " + car.model
+                                  }
+                                  handleComplete={this.handleComplete}
+                                  carInfoHandler={this.carInfoHandler}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Transition>
+                      );
+                    })}
+                  </div>
+                );
               }}
             </AppDataContext.Consumer>
           )}

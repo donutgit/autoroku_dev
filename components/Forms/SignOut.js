@@ -6,7 +6,7 @@ const SignOutButton = () => (
   <AuthContext.Consumer>
     {({ onLogout }) => {
       return (
-        <Button fullWidth={true} color="secondary" onClick={onLogout}>
+        <Button fullWidth={true} color="secondary" onClick={() => onLogout()}>
           Sign Out
         </Button>
       );

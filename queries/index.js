@@ -1,5 +1,5 @@
 import axios from "./axiosInstance";
-import { getToken } from "../modules/AuthHelpers";
+import { getAccessToken } from "../modules/AuthHelpers";
 //NOMINATIONS
 export const getNominations = () => axios.get("/api/nominations");
 export const addNomination = data => axios.post("/api/nominations", data);
@@ -46,7 +46,7 @@ export const getUserData = () =>
   axios.get("/api/user", {
     headers: {
       "Content-type": "application/x-www-form-urlencoded",
-      Authorization: "bearer " + getToken()
+      Authorization: "bearer " + getAccessToken()
     }
   });
 //USERS

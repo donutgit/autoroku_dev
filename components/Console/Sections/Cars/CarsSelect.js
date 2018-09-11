@@ -8,6 +8,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 //comp
 import FullScreenDialog from "./FullScreenDialog";
+import { REMOVE_CAR, GET_CARS_NOMINATIONS } from "../../../../graphql";
+import { Mutation } from "react-apollo";
 
 const styles = theme => ({
   formControl: {
@@ -59,7 +61,7 @@ class CarsSelect extends Component {
               <em>None</em>
             </MenuItem>
             {cars.map((car, i) => (
-              <MenuItem key={car._id} value={i}>
+              <MenuItem key={car.id} value={i}>
                 {car.mark + " " + car.model}
               </MenuItem>
             ))}
@@ -131,14 +133,23 @@ class CarsSelect extends Component {
               >
                 {`Edit ${currentCar.mark} ${currentCar.model}`}
               </Button>
-              <Button
-                variant="raised"
-                size="small"
-                color="secondary"
-                onClick={() => this.props.onDelete(currentCar._id)}
+              <Mutation
+                mutation={REMOVE_CAR}
+                refetchQueries={[{ query: GET_CARS_NOMINATIONS }]}
               >
-                {`Remove ${currentCar.mark} ${currentCar.model}`}
-              </Button>
+                {mutation => (
+                  <Button
+                    variant="raised"
+                    size="small"
+                    color="secondary"
+                    onClick={() =>
+                      mutation({ variables: { id: currentCar.id } })
+                    }
+                  >
+                    {`Remove ${currentCar.mark} ${currentCar.model}`}
+                  </Button>
+                )}
+              </Mutation>
             </React.Fragment>
           ) : null}
         </div>
@@ -146,8 +157,6 @@ class CarsSelect extends Component {
           <FullScreenDialog
             open={this.state.openForm}
             formData={currentCar}
-            onAdd={this.props.onAdd}
-            onUpdate={this.props.onUpdate}
             onClose={this.closeCarDialog}
           />
         ) : null}

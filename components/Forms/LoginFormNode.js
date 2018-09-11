@@ -9,6 +9,8 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 //import { withStyles } from "@material-ui/core/styles";
 import classes from "./FormStyles.css";
+import { Mutation } from "react-apollo";
+import { LOGIN } from "../../graphql";
 
 // Our inner form component. Will be wrapped with Formik({..})
 const MyInnerForm = props => {
@@ -24,53 +26,57 @@ const MyInnerForm = props => {
     //handleSubmit
     //handleReset
   } = props;
+  // const { email, password } = props.values;
   const { email, password } = props.values;
-  let form = (
-    <form
-      onSubmit={event => props.onSubmit(event, { email, password }, toggleAuth)}
-      className={props.loading ? classes.loading : null}
-    >
-      <TextField
-        margin="normal"
-        error={errors.email && touched.email ? true : false}
-        id="email"
-        label="Enter your email"
-        type="text"
-        value={values.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        helperText={errors.email && touched.email ? errors.email : null}
-      />
-      <TextField
-        margin="normal"
-        error={errors.password && touched.password ? true : false}
-        id="password"
-        label="Password"
-        type="password"
-        value={values.password}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        helperText={
-          errors.password && touched.password ? errors.password : null
-        }
-      />
-      <Button
-        variant="raised"
-        color="primary"
-        type="submit"
-        disabled={!props.isValid}
-        fullWidth
-      >
-        Login
-      </Button>
-      <Typography variant="caption">
-        Don't have an account? <Link to="/join">Sign Up</Link>
-      </Typography>
-    </form>
-  );
   return (
     <div>
-      {form}
+      <Mutation mutation={LOGIN}>
+        {mutate => (
+          <form
+            onSubmit={event =>
+              props.onSubmit(event, { email, password }, mutate, toggleAuth)
+            }
+            className={props.loading ? classes.loading : null}
+          >
+            <TextField
+              margin="normal"
+              error={errors.email && touched.email ? true : false}
+              id="email"
+              label="Enter your email"
+              type="text"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              helperText={errors.email && touched.email ? errors.email : null}
+            />
+            <TextField
+              margin="normal"
+              error={errors.password && touched.password ? true : false}
+              id="password"
+              label="Password"
+              type="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              helperText={
+                errors.password && touched.password ? errors.password : null
+              }
+            />
+            <Button
+              variant="raised"
+              color="primary"
+              type="submit"
+              disabled={!props.isValid}
+              fullWidth
+            >
+              Login
+            </Button>
+            <Typography variant="caption">
+              Don't have an account? <Link to="/join">Sign Up</Link>
+            </Typography>
+          </form>
+        )}
+      </Mutation>
       {props.loading ? (
         <div className={classes.loadingWrapper}>
           <CircularProgress size={50} color="secondary" />

@@ -2,9 +2,9 @@ import React from "react";
 import Route from "react-router-dom/Route";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-import ResponsiveDrawer from "../../components/Navigation/ResponsiveDrawer/ResponsiveDrawer";
-import Footer from "../../components/Navigation/Footer/Footer";
-import LayoutBg from "../../assets/bg_l.png";
+import ResponsiveDrawer from "../components/Navigation/ResponsiveDrawer/ResponsiveDrawer";
+import Footer from "../components/Navigation/Footer/Footer";
+import LayoutBg from "../assets/bg_l.png";
 
 const style = {
   Layout: {

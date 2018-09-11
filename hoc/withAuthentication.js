@@ -4,7 +4,6 @@ import {
   isUserAuthenticated,
   deauthenticateUser
 } from "../modules/AuthHelpers";
-import { getUserData } from "../queries";
 
 const withAuthentication = Component =>
   class WithAuthentication extends React.Component {
@@ -15,29 +14,17 @@ const withAuthentication = Component =>
 
     componentDidMount() {
       // get user data if user authenticated
-      if (isUserAuthenticated()) {
-        this.getUserData();
-      }
+      this.toggleAuthenticateStatus();
     }
 
     toggleAuthenticateStatus = () => {
       // check authenticated status and toggle state based on that
       if (isUserAuthenticated()) {
-        this.getUserData();
+        this.setState({ authenticated: true });
       } else {
-        this.setState({
-          authenticated: false,
-          user: null
-        });
+        // client.query({ query: GET_USERS }).then(res => console.log(res));
+        this.setState({ authenticated: false });
       }
-    };
-
-    getUserData = () => {
-      getUserData().then(({ data }) => {
-        if (data.user) {
-          this.setState({ authenticated: true, user: data.user });
-        }
-      });
     };
 
     onLogout = () => {
@@ -55,7 +42,6 @@ const withAuthentication = Component =>
         <AuthContext.Provider
           value={{
             authenticated: this.state.authenticated,
-            user: this.state.user,
             toggleAuth: this.toggleAuthenticateStatus,
             onLogout: this.onLogout
           }}

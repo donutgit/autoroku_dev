@@ -1,7 +1,7 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import { HeaderUnderline } from "../../../containers/MainPage/MainPage.css";
+import { HeaderUnderline } from "../../../styles/MainPage.css";
 
 import PartnersLogo1 from "../../../assets/partners/partners-01.png";
 import PartnersLogo2 from "../../../assets/partners/partners-02.png";

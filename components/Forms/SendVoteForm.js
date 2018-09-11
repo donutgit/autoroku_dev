@@ -7,8 +7,9 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import classes from "./FormStyles.css";
 import { DisplayFormikState } from "./helper";
-//q
-import { addVote } from "../../queries";
+//apollo
+import { Mutation } from "react-apollo";
+import { ADD_VOTE } from "../../graphql";
 
 // Our inner form component. Will be wrapped with Formik({..})
 class MyInnerForm extends Component {
@@ -16,20 +17,20 @@ class MyInnerForm extends Component {
     loading: false
   };
 
-  submitFormHandler = event => {
+  submitFormHandler = (event, mutate) => {
     event.preventDefault();
     this.setState({ loading: true });
     const data = {
-      user_data: this.props.values,
-      vote_reslt: this.props.choosedCars
+      name: this.props.values.name,
+      email: this.props.values.email,
+      phone: this.props.values.phone,
+      voteResult: JSON.stringify(this.props.choosedCars)
+      // voteResult: JSON.stringify({kappa: "pride", jebaited: "kuk"})
     };
-    console.log(data);
 
-    addVote(data).then(res => {
-      if (res.status === 200) {
-        console.log("Your vote was accepted!");
-        this.setState({ loading: false });
-      }
+    mutate({ variables: data }).then(res => {
+      console.log(res);
+      this.setState({ loading: false });
     });
   };
 
@@ -45,70 +46,71 @@ class MyInnerForm extends Component {
       //handleReset
     } = this.props;
 
-    let form = (
-      <form
-        onSubmit={this.submitFormHandler}
-        className={this.state.loading ? classes.loading : null}
-      >
-        <TextField
-          margin="normal"
-          error={errors.name && touched.name ? true : false}
-          id="name"
-          label="Enter your name"
-          type="text"
-          value={values.name}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.name && touched.name ? "Error" : null}
-        />
-        <TextField
-          margin="normal"
-          error={errors.email && touched.email ? true : false}
-          id="email"
-          label="Enter your email"
-          type="text"
-          value={values.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.email && touched.email ? "Error" : null}
-        />
-        <TextField
-          margin="normal"
-          error={errors.phone && touched.phone ? true : false}
-          id="phone"
-          label="Enter your phone"
-          type="number"
-          value={values.phone}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.phone && touched.phone ? "Error" : null}
-        />
-        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Button
-            variant="raised"
-            color="primary"
-            onClick={this.props.voteReset}
-          >
-            Reset Vote
-          </Button>
-          <Button
-            variant="raised"
-            color="primary"
-            type="submit"
-            disabled={!this.props.isValid}
-          >
-            Submit
-          </Button>
-        </div>
-        <DisplayFormikState {...this.props} />
-      </form>
-    );
     return (
       <div className={classes.formWrapper}>
         <h3 style={{ textAlign: "center" }}>
           All steps completed! Submit form to finish vote
         </h3>
-        {form}
+        <Mutation mutation={ADD_VOTE}>
+          {mutate => (
+            <form
+              onSubmit={event => this.submitFormHandler(event, mutate)}
+              className={this.state.loading ? classes.loading : null}
+            >
+              <TextField
+                margin="normal"
+                error={errors.name && touched.name ? true : false}
+                id="name"
+                label="Enter your name"
+                type="text"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.name && touched.name ? "Error" : null}
+              />
+              <TextField
+                margin="normal"
+                error={errors.email && touched.email ? true : false}
+                id="email"
+                label="Enter your email"
+                type="text"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.email && touched.email ? "Error" : null}
+              />
+              <TextField
+                margin="normal"
+                error={errors.phone && touched.phone ? true : false}
+                id="phone"
+                label="Enter your phone"
+                type="number"
+                value={values.phone}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.phone && touched.phone ? "Error" : null}
+              />
+              <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                <Button
+                  variant="raised"
+                  color="primary"
+                  onClick={this.props.voteReset}
+                >
+                  Reset Vote
+                </Button>
+                <Button
+                  variant="raised"
+                  color="primary"
+                  type="submit"
+                  disabled={!this.props.isValid}
+                >
+                  Submit
+                </Button>
+              </div>
+              <DisplayFormikState {...this.props} />
+            </form>
+          )}
+        </Mutation>
         {this.state.loading ? (
           <div className={classes.loadingWrapper}>
             <CircularProgress size={50} color="secondary" />

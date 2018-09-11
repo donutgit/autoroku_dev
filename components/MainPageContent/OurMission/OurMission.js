@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
 import ExpandedPannel from "./ExpandedPannel";
-import { HeaderUnderline } from "../../../containers/MainPage/MainPage.css";
+import { HeaderUnderline } from "../../../styles/MainPage.css";
 
 const OurMission = props => {
   return (

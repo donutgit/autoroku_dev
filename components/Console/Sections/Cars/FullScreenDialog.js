@@ -43,8 +43,6 @@ const FullScreenDialog = props => {
       </AppBar>
       <AddCarForm
         formData={formData}
-        onAdd={props.onAdd}
-        onUpdate={props.onUpdate}
         onClose={onClose}
       />
     </Dialog>

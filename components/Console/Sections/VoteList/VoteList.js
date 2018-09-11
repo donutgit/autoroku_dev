@@ -11,7 +11,8 @@ import Paper from "@material-ui/core/Paper";
 import VoteCell from "./VoteCell";
 import Spinner from "../../../UI/Spinner/Spinner";
 //query
-import { getVotes, deleteVote } from "../../../../queries";
+import { Query } from "react-apollo";
+import { GET_VOTES } from "../../../../graphql";
 
 const styles = theme => ({
   root: {
@@ -25,36 +26,10 @@ const styles = theme => ({
 });
 
 class VoteList extends PureComponent {
-  state = {
-    votes: null,
-    error: true
-  };
-
-  onInit = () => {
-    getVotes().then(res => {
-      if (res.data) {
-        this.setState({ votes: res.data, error: false });
-      } else {
-        throw new Error("No such document - [votes].");
-      }
-    });
-  };
-
-  onDelete = id => {
-    deleteVote(id).then(res => {
-      this.onInit();
-    });
-  };
-
-  componentWillMount() {
-    this.onInit();
-  }
-
   render() {
-    const { votes, error } = this.state;
     const { classes } = this.props;
 
-    return !error && votes ? (
+    return (
       <Paper className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
@@ -66,16 +41,26 @@ class VoteList extends PureComponent {
             </TableRow>
           </TableHead>
           <TableBody>
-            {votes.map(vote => {
-              return (
-                <VoteCell key={vote._id} vote={vote} onDelete={this.onDelete} />
-              );
-            })}
+            <Query query={GET_VOTES}>
+              {client => {
+                const { loading, error, data } = client;
+                if (loading)
+                  return (
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        <Spinner />
+                      </TableCell>
+                    </TableRow>
+                  );
+                if (error) return `Error! ${error.message}`;
+                return data.votes.map(vote => (
+                  <VoteCell key={vote.id} vote={vote} />
+                ));
+              }}
+            </Query>
           </TableBody>
         </Table>
       </Paper>
-    ) : (
-      <Spinner />
     );
   }
 }
